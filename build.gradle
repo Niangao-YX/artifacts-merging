@@ -21,8 +21,8 @@ dependencies {
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 
-        modCompileOnly "maven.modrinth:artifacts:13.2.0"
-        modCompileOnly "maven.modrinth:architectury-api:13.0.8+fabric"
+        modImplementation "maven.modrinth:artifacts:13.2.0"
+        modImplementation "maven.modrinth:architectury-api:13.0.8+fabric"
 }
 
 processResources {
@@ -34,14 +34,14 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-        it.options.release = 17
+        it.options.release = 21
 }
 
 java {
         withSourcesJar()
 
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {

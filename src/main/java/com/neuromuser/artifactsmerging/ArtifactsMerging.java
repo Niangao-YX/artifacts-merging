@@ -28,40 +28,6 @@ public class ArtifactsMerging implements ModInitializer {
                 ModItems.register();
                 ModRecipes.register();
 
-                ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-                        try {
-                                RecipeManager recipeManager = server.getRecipeManager();
-                                ArtifactMergingRecipe recipe = new ArtifactMergingRecipe(CraftingRecipeCategory.MISC);
-                                RecipeEntry<ArtifactMergingRecipe> entry = new RecipeEntry<>(
-                                        Identifier.of(MOD_ID, "artifact_merging"),
-                                        recipe
-                                );
-
-                                Field recipesByTypeField = RecipeManager.class.getDeclaredField("recipesByType");
-                                recipesByTypeField.setAccessible(true);
-                                Multimap<RecipeType<?>, RecipeEntry<?>> recipesByType =
-                                        (Multimap<RecipeType<?>, RecipeEntry<?>>) recipesByTypeField.get(recipeManager);
-
-                                ImmutableMultimap.Builder<RecipeType<?>, RecipeEntry<?>> builder = ImmutableMultimap.builder();
-                                builder.putAll(recipesByType);
-                                builder.put(RecipeType.CRAFTING, entry);
-                                recipesByTypeField.set(recipeManager, builder.build());
-
-                                Field recipesByIdField = RecipeManager.class.getDeclaredField("recipesById");
-                                recipesByIdField.setAccessible(true);
-                                Map<Identifier, RecipeEntry<?>> recipesById =
-                                        (Map<Identifier, RecipeEntry<?>>) recipesByIdField.get(recipeManager);
-
-                                ImmutableMap.Builder<Identifier, RecipeEntry<?>> builder2 = ImmutableMap.builder();
-                                builder2.putAll(recipesById);
-                                builder2.put(entry.id(), entry);
-                                recipesByIdField.set(recipeManager, builder2.build());
-
-                        } catch (Exception e) {
-                                LOGGER.error("Failed to inject recipe via reflection", e);
-                        }
-                });
-
                 LOGGER.info("Artifacts Merging initialized!");
         }
 }
