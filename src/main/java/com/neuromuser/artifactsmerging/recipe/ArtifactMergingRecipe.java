@@ -1,39 +1,37 @@
 package com.neuromuser.artifactsmerging.recipe;
 
-import artifacts.item.ArtifactItem;
 import com.neuromuser.artifactsmerging.item.RandomArtifactItem;
 import com.neuromuser.artifactsmerging.registry.ModRecipes;
-import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
 public class ArtifactMergingRecipe extends SpecialCraftingRecipe {
 
-    public ArtifactMergingRecipe(Identifier id, CraftingRecipeCategory category) {
-        super(id, category);
+    public ArtifactMergingRecipe(CraftingRecipeCategory category) {
+        super(category);
+    }
+
+    private boolean isArtifact(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        return Registries.ITEM.getId(stack.getItem()).getNamespace().equals("artifacts");
     }
 
     @Override
-    public boolean matches(RecipeInputInventory inventory, World world) {
-        ItemStack firstArtifact = ItemStack.EMPTY;
-        ItemStack secondArtifact = ItemStack.EMPTY;
+    public boolean matches(CraftingRecipeInput input, World world) {
         int artifactCount = 0;
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getStack(i);
+        for (int i = 0; i < input.getSize(); i++) {
+            ItemStack stack = input.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem() instanceof ArtifactItem) {
+                if (isArtifact(stack)) {
                     artifactCount++;
-                    if (firstArtifact.isEmpty()) {
-                        firstArtifact = stack;
-                    } else if (secondArtifact.isEmpty()) {
-                        secondArtifact = stack;
-                    }
                 } else {
                     return false;
                 }
@@ -44,13 +42,13 @@ public class ArtifactMergingRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
         ItemStack firstArtifact = ItemStack.EMPTY;
         ItemStack secondArtifact = ItemStack.EMPTY;
 
-        for (int i = 0; i < inventory.size(); i++) {
-            ItemStack stack = inventory.getStack(i);
-            if (!stack.isEmpty() && stack.getItem() instanceof ArtifactItem) {
+        for (int i = 0; i < input.getSize(); i++) {
+            ItemStack stack = input.getStackInSlot(i);
+            if (isArtifact(stack)) {
                 if (firstArtifact.isEmpty()) {
                     firstArtifact = stack;
                 } else if (secondArtifact.isEmpty()) {
@@ -59,16 +57,15 @@ public class ArtifactMergingRecipe extends SpecialCraftingRecipe {
             }
         }
 
-        ItemStack result = RandomArtifactItem.createWithExcludedArtifacts(
-            firstArtifact.getItem(),
-            secondArtifact.getItem()
+        return RandomArtifactItem.createWithExcludedArtifacts(
+                firstArtifact.getItem(),
+                secondArtifact.getItem()
         );
-        return result;
     }
 
     @Override
     public boolean fits(int width, int height) {
-        return width >= 2 || height >= 2;
+        return width * height >= 2;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.neuromuser.artifactsmerging.item;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 
 public class RandomArtifactItem extends Item {
 
@@ -12,9 +14,12 @@ public class RandomArtifactItem extends Item {
 
     public static ItemStack createWithExcludedArtifacts(Item excluded1, Item excluded2) {
         ItemStack stack = new ItemStack(com.neuromuser.artifactsmerging.registry.ModItems.RANDOM_ARTIFACT.get());
-        NbtCompound nbt = stack.getOrCreateNbt();
-        nbt.putString("excluded1", net.minecraft.registry.Registries.ITEM.getId(excluded1).toString());
-        nbt.putString("excluded2", net.minecraft.registry.Registries.ITEM.getId(excluded2).toString());
+        stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, (currentNbt) ->
+                currentNbt.apply(nbt -> {
+                    nbt.putString("excluded1", Registries.ITEM.getId(excluded1).toString());
+                    nbt.putString("excluded2", Registries.ITEM.getId(excluded2).toString());
+                })
+        );
         return stack;
     }
 }
