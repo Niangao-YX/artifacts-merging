@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "artifacts-merging",
+  "version": "${version}",
+  "name": "Artifacts Merging",
+  "description": "Combine two artifacts into one random one!",
+  "authors": [
+    "Neuromuser"
+  ],
+  "contact": {
+    "sources": "https://github.com/neuromuser/artifacts-merging"
+  },
+  "license": "MIT",
+  "icon": "assets/artifacts-merging/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.neuromuser.artifactsmerging.ArtifactsMerging"
+    ]
+  },
+  "mixins": [
+    "artifacts-merging.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "artifacts": "*",
+    "architectury": "*"
+  }
+}
