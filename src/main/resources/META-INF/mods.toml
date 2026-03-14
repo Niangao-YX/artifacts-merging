@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+description='''
+${mod_description}
+'''
+logoFile="icon.png"
+
+[[dependencies.artifactsmerging]]
+    modId="forge"
+    mandatory=true
+    versionRange="${neo_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.artifactsmerging]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[${mc_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.artifactsmerging]]
+    modId="artifacts"
+    mandatory=true
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
