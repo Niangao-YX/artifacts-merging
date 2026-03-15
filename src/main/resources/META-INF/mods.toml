@@ -32,3 +32,10 @@ logoFile="icon.png"
     versionRange="*"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.artifactsmerging]]
+    modId="relics"
+    mandatory=false
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"

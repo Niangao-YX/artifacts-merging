@@ -14,11 +14,12 @@ public class RandomArtifactItem extends Item {
         super(properties);
     }
 
-    public static ItemStack createWithExcludedArtifacts(Item excluded1, Item excluded2) {
+    public static ItemStack create(Item excluded1, Item excluded2, String poolTag) {
         ItemStack stack = new ItemStack(ModItems.RANDOM_ARTIFACT.get());
         CompoundTag nbt = stack.getOrCreateTag();
         nbt.putString("excluded1", Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(excluded1)).toString());
         nbt.putString("excluded2", Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(excluded2)).toString());
+        nbt.putString("pool", poolTag);
         return stack;
     }
 }

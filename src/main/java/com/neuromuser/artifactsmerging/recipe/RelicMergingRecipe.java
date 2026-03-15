@@ -15,11 +15,11 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class ArtifactMergingRecipe extends CustomRecipe {
+public class RelicMergingRecipe extends CustomRecipe {
 
-    private static final TagKey<Item> ARTIFACTS_TAG = TagKey.create(Registries.ITEM, new ResourceLocation("artifactsmerging", "artifacts"));
+    private static final TagKey<Item> RELICS_TAG = TagKey.create(Registries.ITEM, new ResourceLocation("artifactsmerging", "relics"));
 
-    public ArtifactMergingRecipe(ResourceLocation id, CraftingBookCategory category) {
+    public RelicMergingRecipe(ResourceLocation id, CraftingBookCategory category) {
         super(id, category);
     }
 
@@ -29,7 +29,7 @@ public class ArtifactMergingRecipe extends CustomRecipe {
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
             if (!stack.isEmpty()) {
-                if (stack.is(ARTIFACTS_TAG)) count++;
+                if (stack.is(RELICS_TAG)) count++;
                 else return false;
             }
         }
@@ -41,13 +41,13 @@ public class ArtifactMergingRecipe extends CustomRecipe {
         Item ex1 = null, ex2 = null;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (!stack.isEmpty() && stack.is(ARTIFACTS_TAG)) {
+            if (!stack.isEmpty() && stack.is(RELICS_TAG)) {
                 if (ex1 == null) ex1 = stack.getItem();
                 else ex2 = stack.getItem();
             }
         }
         if (ex1 == null || ex2 == null) return ItemStack.EMPTY;
-        return RandomArtifactItem.create(ex1, ex2, "artifactsmerging:artifacts");
+        return RandomArtifactItem.create(ex1, ex2, "artifactsmerging:relics");
     }
 
     @Override
@@ -57,6 +57,6 @@ public class ArtifactMergingRecipe extends CustomRecipe {
 
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
-        return ModRecipes.ARTIFACT_MERGING_SERIALIZER.get();
+        return ModRecipes.RELIC_MERGING_SERIALIZER.get();
     }
 }
