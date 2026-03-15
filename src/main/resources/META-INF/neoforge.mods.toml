@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="${loader_version_range}"
+loaderVersion="[4,)"
 license="${mod_license}"
 
 [[mods]]
@@ -10,32 +10,32 @@ authors="${mod_authors}"
 description='''
 ${mod_description}
 '''
-logoFile="icon.png"
+
 
 [[dependencies.artifactsmerging]]
-    modId="forge"
-    mandatory=true
-    versionRange="${neo_version_range}"
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.artifactsmerging]]
     modId="minecraft"
-    mandatory=true
+    type="required"
     versionRange="[${mc_version},)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.artifactsmerging]]
     modId="artifacts"
-    mandatory=true
+    type="required"
     versionRange="*"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.artifactsmerging]]
     modId="relics"
-    mandatory=false
+    type="optional"
     versionRange="*"
     ordering="NONE"
     side="BOTH"

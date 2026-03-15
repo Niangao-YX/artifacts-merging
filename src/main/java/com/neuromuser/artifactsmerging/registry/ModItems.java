@@ -2,18 +2,18 @@ package com.neuromuser.artifactsmerging.registry;
 
 import com.neuromuser.artifactsmerging.ArtifactsMerging;
 import com.neuromuser.artifactsmerging.item.RandomArtifactItem;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
-            DeferredRegister.create(ForgeRegistries.ITEMS, ArtifactsMerging.MOD_ID);
+            DeferredRegister.create(Registries.ITEM, ArtifactsMerging.MOD_ID);
 
-    public static final RegistryObject<Item> RANDOM_ARTIFACT =
+    public static final DeferredHolder<Item, RandomArtifactItem> RANDOM_ARTIFACT =
             ITEMS.register("random_artifact",
                     () -> new RandomArtifactItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 

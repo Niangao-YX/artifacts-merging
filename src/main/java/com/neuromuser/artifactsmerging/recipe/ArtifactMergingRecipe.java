@@ -2,14 +2,15 @@ package com.neuromuser.artifactsmerging.recipe;
 
 import com.neuromuser.artifactsmerging.item.RandomArtifactItem;
 import com.neuromuser.artifactsmerging.registry.ModRecipes;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -17,19 +18,24 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArtifactMergingRecipe extends CustomRecipe {
 
-    private static final TagKey<Item> ARTIFACTS_TAG = TagKey.create(Registries.ITEM, new ResourceLocation("artifactsmerging", "artifacts"));
+    private static final TagKey<Item> ARTIFACTS_TAG = TagKey.create(Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath("artifactsmerging", "artifacts"));
 
-    public ArtifactMergingRecipe(ResourceLocation id, CraftingBookCategory category) {
-        super(id, category);
+    public ArtifactMergingRecipe(CraftingBookCategory category) {
+        super(category);
+    }
+    private static boolean isArtifact(ItemStack stack) {
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return key.getNamespace().equals("artifacts");
     }
 
     @Override
-    public boolean matches(CraftingContainer inventory, @NotNull Level level) {
+    public boolean matches(CraftingInput input, @NotNull Level level) {
         int count = 0;
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack stack = inventory.getItem(i);
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
             if (!stack.isEmpty()) {
-                if (stack.is(ARTIFACTS_TAG)) count++;
+                if (isArtifact(stack)) count++;
                 else return false;
             }
         }
@@ -37,11 +43,11 @@ public class ArtifactMergingRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(CraftingContainer inventory, @NotNull RegistryAccess registryAccess) {
+    public @NotNull ItemStack assemble(CraftingInput input, HolderLookup.@NotNull Provider registries) {
         Item ex1 = null, ex2 = null;
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack stack = inventory.getItem(i);
-            if (!stack.isEmpty() && stack.is(ARTIFACTS_TAG)) {
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
+            if (!stack.isEmpty() && isArtifact(stack)) {
                 if (ex1 == null) ex1 = stack.getItem();
                 else ex2 = stack.getItem();
             }
