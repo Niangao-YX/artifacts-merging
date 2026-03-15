@@ -3,6 +3,7 @@ package com.neuromuser.artifactsmerging.recipe;
 import com.neuromuser.artifactsmerging.item.RandomArtifactItem;
 import com.neuromuser.artifactsmerging.registry.ModRecipes;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -15,13 +16,23 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 public class RelicMergingRecipe extends CustomRecipe {
+    private static final Set<String> EXCLUDED = Set.of(
+            "relic_experience_bottle", "pet_bone", "golden_tooth"
+    );
+
 
     private static final TagKey<Item> RELICS_TAG = TagKey.create(Registries.ITEM,
             ResourceLocation.fromNamespaceAndPath("artifactsmerging", "relics"));
 
     public RelicMergingRecipe(CraftingBookCategory category) {
         super(category);
+    }
+    private static boolean isRelic(ItemStack stack) {
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return key.getNamespace().equals("relics") && !EXCLUDED.contains(key.getPath());
     }
 
     @Override
@@ -30,7 +41,7 @@ public class RelicMergingRecipe extends CustomRecipe {
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
             if (!stack.isEmpty()) {
-                if (stack.is(RELICS_TAG)) count++;
+                if (isRelic(stack)) count++;
                 else return false;
             }
         }
@@ -42,7 +53,7 @@ public class RelicMergingRecipe extends CustomRecipe {
         Item ex1 = null, ex2 = null;
         for (int i = 0; i < input.size(); i++) {
             ItemStack stack = input.getItem(i);
-            if (!stack.isEmpty() && stack.is(RELICS_TAG)) {
+            if (!stack.isEmpty() && isRelic(stack)) {
                 if (ex1 == null) ex1 = stack.getItem();
                 else ex2 = stack.getItem();
             }

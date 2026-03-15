@@ -2,16 +2,12 @@ package com.neuromuser.artifactsmerging.event;
 
 import com.neuromuser.artifactsmerging.ArtifactsMerging;
 import com.neuromuser.artifactsmerging.registry.ModItems;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +18,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 @EventBusSubscriber(modid = ArtifactsMerging.MOD_ID)
 public class ModEvents {
@@ -48,6 +44,10 @@ public class ModEvents {
         }
     }
 
+    private static final Set<String> RELICS_EXCLUDED = Set.of(
+            "relic_experience_bottle", "pet_bone", "golden_tooth"
+    );
+
     private static ItemStack resolve(Player player, ItemStack stack) {
         CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         if (customData == null) return stack;
@@ -57,20 +57,20 @@ public class ModEvents {
         Item ex1 = BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString("excluded1")));
         Item ex2 = BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString("excluded2")));
 
-        TagKey<Item> poolTag = TagKey.create(Registries.ITEM, ResourceLocation.parse(nbt.getString("pool")));
-        Optional<HolderSet.Named<Item>> tagHolder = player.level().registryAccess()
-                .registryOrThrow(Registries.ITEM).getTag(poolTag);
+        String pool = nbt.getString("pool");
+        String namespace = pool.equals("artifactsmerging:artifacts") ? "artifacts" : "relics";
 
-        List<Item> pool = new ArrayList<>();
-        tagHolder.ifPresent(holders -> {
-            for (Holder<Item> holder : holders) {
-                Item item = holder.value();
-                if (item != ex1 && item != ex2) pool.add(item);
+        List<Item> candidates = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
+            if (key.getNamespace().equals(namespace) && item != ex1 && item != ex2) {
+                if (namespace.equals("relics") && RELICS_EXCLUDED.contains(key.getPath())) continue;
+                candidates.add(item);
             }
-        });
+        }
 
-        if (pool.isEmpty()) return stack;
-        return new ItemStack(pool.get((int) (Math.random() * pool.size())));
+        if (candidates.isEmpty()) return stack;
+        return new ItemStack(candidates.get((int) (Math.random() * candidates.size())));
     }
 
     private static void playSound(Player player) {
